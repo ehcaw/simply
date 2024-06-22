@@ -14,10 +14,10 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ResponsiveLine } from "@nivo/line";
+//import { ResponsiveLine } from "@nivo/line";
 import { JSX, ClassAttributes, HTMLAttributes, SVGProps } from "react";
 
-export default function Component() {
+export default function Dashboard() {
   return (
     <div className="flex h-screen">
       <aside className="w-64 bg-[#5C4B99] p-5 text-white">
@@ -156,79 +156,7 @@ function CurvedlineChart(
     ClassAttributes<HTMLDivElement> &
     HTMLAttributes<HTMLDivElement>
 ) {
-  return (
-    <div {...props}>
-      <ResponsiveLine
-        data={[
-          {
-            id: "Desktop",
-            data: [
-              { x: "Jan", y: 43 },
-              { x: "Feb", y: 137 },
-              { x: "Mar", y: 61 },
-              { x: "Apr", y: 145 },
-              { x: "May", y: 26 },
-              { x: "Jun", y: 154 },
-            ],
-          },
-          {
-            id: "Mobile",
-            data: [
-              { x: "Jan", y: 60 },
-              { x: "Feb", y: 48 },
-              { x: "Mar", y: 177 },
-              { x: "Apr", y: 78 },
-              { x: "May", y: 96 },
-              { x: "Jun", y: 204 },
-            ],
-          },
-        ]}
-        margin={{ top: 10, right: 10, bottom: 40, left: 40 }}
-        xScale={{
-          type: "point",
-        }}
-        yScale={{
-          type: "linear",
-          min: 0,
-          max: "auto",
-        }}
-        curve="monotoneX"
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 0,
-          tickPadding: 16,
-        }}
-        axisLeft={{
-          tickSize: 0,
-          tickValues: 5,
-          tickPadding: 16,
-        }}
-        colors={["#2563eb", "#e11d48"]}
-        pointSize={6}
-        useMesh={true}
-        gridYValues={6}
-        theme={{
-          tooltip: {
-            chip: {
-              borderRadius: "9999px",
-            },
-            container: {
-              fontSize: "12px",
-              textTransform: "capitalize",
-              borderRadius: "6px",
-            },
-          },
-          grid: {
-            line: {
-              stroke: "#f3f4f6",
-            },
-          },
-        }}
-        role="application"
-      />
-    </div>
-  );
+  return <div {...props}></div>;
 }
 
 function HandHelpingIcon(
