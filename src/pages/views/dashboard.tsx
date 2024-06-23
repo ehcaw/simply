@@ -1,11 +1,17 @@
+// src/pages/views/dashboard.tsx
 import { AreaChart, BarChart, BarList, Card } from "@tremor/react";
 import { SideBar } from "@/components/ui/SideBar";
 import { useState, useEffect } from "react";
 import Papa from "papaparse";
 import { motion } from "framer-motion";
 import { valueFormatter } from "@/utils";
-import { SupplyRatioData } from "@/models";
+import { SupplyRatioData, PredictedSupplyData } from "@/models";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import {
+  totalPurchaseDataCSV,
+  supplyDataCSV,
+  predictedSupplyCSV,
+} from "@/data";
 
 type DrinkId = number;
 type DrinkName = string;
@@ -50,6 +56,7 @@ const drinkIdToName: Record<DrinkId, DrinkName> = {
 
 export default function Component({}) {
   // State variables
+  const [view, setView] = useState<number>(0); // 0 for dash, 1 for clair, 2 for pass
   const [selectedMonth, setSelectedMonth] = useState<string>("Feb 2024");
   const [sideIsVisible, setSideIsVisible] = useState<boolean>(true);
   const [monthlyTrends, setMonthlyTrends] = useState<
@@ -57,6 +64,9 @@ export default function Component({}) {
   >({});
   const [totalPopularData, setTotalPopularData] = useState<DrinkSales[]>([]);
   const [supplyRatioData, setSupplyRatioData] = useState<SupplyRatioData[]>([]);
+  const [predictedSupplyData, setPredictedSupplyData] = useState<
+    PredictedSupplyData[]
+  >([]);
 
   // Static variables
   const months = Object.keys(monthlyTrends);
@@ -154,7 +164,7 @@ export default function Component({}) {
   // Fetch and process data off rip
   useEffect(() => {
     // Assuming you have your CSV data in a string variable called 'csvData'
-    Papa.parse<string[]>(totalData, {
+    Papa.parse<string[]>(totalPurchaseDataCSV, {
       complete: (result) => {
         const salesData: SaleData[] = result.data.slice(1).map((row) => ({
           sale_id: parseInt(row[0], 10),
@@ -173,7 +183,7 @@ export default function Component({}) {
   useEffect(() => {
     // don't worry bout the logic
     const fetchAndProcessData = async () => {
-      Papa.parse<string[]>(totalData, {
+      Papa.parse<string[]>(totalPurchaseDataCSV, {
         complete: (result) => {
           const salesData: SaleData[] = result.data.slice(1).map((row) => ({
             sale_id: parseInt(row[0], 10),
@@ -242,7 +252,11 @@ export default function Component({}) {
   }, []);
 
   useEffect(() => {
-    setSupplyRatioData(parseSupplyRatioData(supplyData));
+    setSupplyRatioData(parseSupplyRatioData(supplyDataCSV));
+  }, []);
+
+  useEffect(() => {
+    setPredictedSupplyData(parsePredictedSupplyData(predictedSupplyCSV));
   }, []);
 
   // Helper functions
@@ -302,33 +316,42 @@ export default function Component({}) {
 
     return parsedData;
   };
-  // Data pertaining to graphs
 
-  /**
-   * Data for the supply ratio graph
-   * This data is in a format that can be used by the AreaChart component, and is taken through JSON.
-   * See @types for this data structure.
-   * Equation is as follows: Supply Ratio = Actual Utilized Inventory / Actual Full Total Inventory
-   */
+  const parsePredictedSupplyData = (csvData: string): PredictedSupplyData[] => {
+    const parsedData: PredictedSupplyData[] = [];
 
-  // Graphs that rely on total sales data
+    Papa.parse<string[]>(csvData, {
+      complete: (result) => {
+        parsedData.push(
+          ...result.data.slice(1).map((row) => {
+            const date = new Date(row[0]);
+            const shortDate = `${date.toLocaleString("default", {
+              month: "short",
+            })} ${date.getDate()}`;
+            return {
+              date: shortDate,
+              Predicted: Math.round(parseFloat(row[4])), // Rounding to nearest integer
+            };
+          })
+        );
+      },
+      header: false,
+      skipEmptyLines: true,
+    });
 
-  /**
-   * Data for the total supply ratio graph
-   * This data is in a raw CSV data format and is parsed by the useEffect hook.
-   * It contains actual utilized, actual total, and the ratio between the two.
-   */
-  const totalData = ``;
+    return parsedData;
+  };
 
-  const supplyData = ``;
-  // This was filled with all_sales_data.csv, this needs to be changed back.
-  // This should be filled with data parsed from all_sales_data.csv and renamed accordingly
-
-  /**
-   * Data for the monthly trends graph
-   * This data is in a raw CSV data format and is parsed by the useEffect hook.
-   * This data will be in the format of sale_id,drink_id,sale_date,quantity_sold.
-   */
+  const renderView = () => {
+    switch (view) {
+      case 0:
+        return <>{renderDashboard()}</>;
+      case 1:
+        return <>{renderClairvoyant()}</>;
+      case 2:
+        return <>{renderPassenger()}</>;
+    }
+  };
 
   // define graphs here
   const monthlyTrend = () => {
@@ -428,21 +451,33 @@ export default function Component({}) {
     );
   };
 
-  return (
-    <div className="flex h-screen w-full bg-[#001122]">
-      {/* Sidebar */}
-      <motion.aside
-        className="bg-[#3b3b3b] p-5 text-white"
-        initial={{ width: "0" }}
-        animate={{ width: sideIsVisible ? "16.666%" : "70px" }}
-        transition={{ duration: 0.5 }}
-        onMouseEnter={() => setSideIsVisible(true)}
-        onMouseLeave={() => setSideIsVisible(false)}
-      >
-        <SideBar isVisible={sideIsVisible} />
-      </motion.aside>
+  const predictedSupply = () => {
+    return (
+      <Card className="sm:mx-auto sm:max-w-lg">
+        <h3 className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+          Predicted supply data
+        </h3>
+        <AreaChart
+          data={predictedSupplyData}
+          index="date"
+          categories={["Predicted"]}
+          colors={["blue"]}
+          valueFormatter={valueFormatter}
+          showLegend={false}
+          showYAxis={false}
+          showGradient={false}
+          startEndOnly={true}
+          className="mt-6 h-64 w-full"
+        />
+      </Card>
+    );
+  };
 
-      {/* Main content */}
+  /**
+   * All views are rendered here to play with state
+   */
+  const renderDashboard = () => {
+    return (
       <div className="flex-1 overflow-auto">
         <div className="grid grid-cols-3 gap-4 h-full">
           <div className="col-span-2">
@@ -459,6 +494,9 @@ export default function Component({}) {
                   title={item.title}
                   description={item.description}
                   header={item.header}
+                  onClick={() => {
+                    setView(i + 1);
+                  }}
                   icon={item.icon}
                 />
               ))}
@@ -469,6 +507,60 @@ export default function Component({}) {
           </div>
         </div>
       </div>
+    );
+  };
+
+  const renderClairvoyant = () => {
+    return (
+      <div className="h-screen w-screen flex justify-center items-center">
+        <div className="flex justify-between w-full max-w-4xl px-4">
+          <div className="w-[48%]">
+            <Card className="mx-auto max-w-xs">{predictedSupply()}</Card>
+          </div>
+          <div className="w-[48%]">
+            <Card className="mx-auto max-w-xs">
+              <p className="text-center text-slate-400">We predict..</p>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPassenger = () => {
+    return (
+      <div className="h-[95vh] mx-auto my-[2.5vh] px-4 flex justify-center items-center">
+        <div className="flex justify-between w-full max-w-4xl">
+          <div className="w-[48%]">
+            <Card className="mx-auto max-w-xs">
+              <p className="text-center text-slate-400">We suggest..</p>
+            </Card>
+          </div>
+          <div className="w-[48%]">
+            <Card className="mx-auto max-w-xs">
+              <p className="text-center text-slate-400">We suggest..</p>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex h-screen w-full bg-[#001122]">
+      {/* Sidebar */}
+      <motion.aside
+        className="bg-opacity-0 border-right border-white p-5 text-white flex items-center justify-center"
+        initial={{ width: "0" }}
+        animate={{ width: sideIsVisible ? "16.666%" : "70px" }}
+        transition={{ duration: 0.5 }}
+        onMouseEnter={() => setSideIsVisible(true)}
+        onMouseLeave={() => setSideIsVisible(false)}
+      >
+        <SideBar isVisible={sideIsVisible} />
+      </motion.aside>
+      {/* Main content */}
+      {renderView()}
     </div>
   );
 }
