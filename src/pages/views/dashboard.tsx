@@ -1,4 +1,4 @@
-import { AreaChart, BarChart, Card, List, ListItem } from "@tremor/react";
+import { AreaChart, BarChart, Card, Flex, List, ListItem } from "@tremor/react";
 import { Pencil2Icon, TriangleRightIcon } from "@radix-ui/react-icons";
 import { SideBar } from "@/components/ui/SideBar";
 import { useState, useEffect } from "react";
@@ -45,7 +45,6 @@ const drinkIdToName: Record<DrinkId, DrinkName> = {
 
 export default function Component({}) {
   // State variables
-  const [currentGraph, setCurrentGraph] = useState<string>("Supply ratio");
   const [monthlyTrends, setMonthlyTrends] = useState<
     Record<string, WeeklyTrend[]>
   >({});
@@ -218,7 +217,7 @@ export default function Component({}) {
       <>
         <Card className="sm:mx-auto sm:max-w-lg">
           <h3 className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-            {currentGraph}
+            Supply ratio
           </h3>
           <AreaChart
             data={data}
@@ -230,7 +229,7 @@ export default function Component({}) {
             showYAxis={false}
             showGradient={false}
             startEndOnly={true}
-            className="mt-6 h-32"
+            className="mt-6 h-full w-full"
           />
           <Card className="mx-auto mt-5 max-w-full">
             <p className="text-xl font-semibold text-white dark:text-dark-tremor-content">
@@ -238,13 +237,15 @@ export default function Component({}) {
             </p>
             <p className="text-sm text-tremor-content-strong dark:text-dark-tremor-content-strong font-light">
               The supply ratio measures how effectively you're using your
-              inventory. A higher ratio means better utilization. It's
-              calculated as:
+              inventory. The higher the ratio, the better that you're utilizing
+              your inventory. It's calculated as:
+              <br /> <br />
+              <span className="text-xs">
+                Supply Ratio = Actual Utilized Inventory / Actual Full Inventory
+              </span>
               <br />
-              Supply Ratio = Actual Utilized Inventory / Actual Full Inventory
-              <br />
-              We track this ratio over time to see how well you're using your
-              inventory.
+              We track this ratio over time as your company grows to see how
+              well you're using your inventory.
             </p>
           </Card>
         </Card>
@@ -252,11 +253,13 @@ export default function Component({}) {
     );
   };
 
-  const totalTrending = () => {};
+  const totalTrending = () => {
+    return <></>;
+  };
 
   return (
-    <div className="flex h-screen">
-      {/* navigator bar on the siiide */}
+    <div className="flex h-screen w-full">
+      {/* Sidebar */}
       <motion.aside
         className="bg-[#3b3b3b] p-5 text-white"
         initial={{ width: "0" }}
@@ -268,42 +271,29 @@ export default function Component({}) {
         <SideBar isVisible={sideIsVisible} />
       </motion.aside>
 
-      {/* main area n shi */}
-      <main className="flex-1 bg-white p-8">
-        {/* data analytics n shi */}
-        <section className="grid grid-cols-2 gap-6">
-          {/* main card */}
-          <Card className="mt-4 relative">
-            <button
-              onClick={() => setCurrentGraph(getPreviousGraph(currentGraph))}
-              className="absolute top-2 right-10 p-2"
-            >
-              &#8592;
-            </button>
-            <button
-              onClick={() => setCurrentGraph(getNextGraph(currentGraph))}
-              className="absolute top-2 right-2 p-2"
-            >
-              &#8594;
-            </button>
-            {currentGraph === "Supply ratio" ? supplyRatio() : monthlyTrend()}
-          </Card>
-        </section>
-
-        {/* clairvoyant */}
-
-        {/* passenger */}
-
-        {/* this rly dnot matter */}
-        <header className="flex justify-between items-center mt-6">
-          <div className="flex flex-row space-x-4">
-            <Pencil2Icon className="w-6 h-6" />
-            <span>
-              Editing as <b>employee</b>
-            </span>
+      {/* Main content */}
+      <div className="flex-1 p-4 overflow-auto">
+        <div className="grid grid-rows-2 gap-4 h-full w-full">
+          <div className="grid grid-cols-3 gap-4 w-full h-1/2">
+            <div className="col-span-2 flex items-center justify-center">
+              <Card className="mx-auto max-w-full w-full h-full">
+                {supplyRatio()}
+              </Card>
+            </div>
+            <div className="flex items-center justify-center">
+              <Card className="w-full h-full">{monthlyTrend()}</Card>
+            </div>
           </div>
-        </header>
-      </main>
+          <div className="grid grid-cols-3 gap-4 w-full h-1/2">
+            <div className="flex items-center justify-center">
+              <Card className="w-full h-full">{supplyRatio()}</Card>
+            </div>
+            <div className="col-span-2 flex items-center justify-center">
+              <Card className="w-full h-full">{supplyRatio()}</Card>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
