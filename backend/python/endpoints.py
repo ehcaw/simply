@@ -105,5 +105,67 @@ def sales_summary():
     return jsonify(sales_summary_results)
 
 
+@app.route('/supply_data', methods=['GET'])
+def supply_data():
+    # Get the month parameter from the request
+    month_str = request.args.get('month')
+
+    # Validate the month parameter
+    if not month_str:
+        return jsonify({'error': 'Please provide a month parameter'}), 400
+
+    try:
+        month = int(month_str)
+        if not (1 <= month <= 12):
+            return jsonify({'error': 'Month must be between 1 and 12'}), 400
+    except ValueError:
+        return jsonify({'error': 'Month must be an integer'}), 400
+
+    # Use the current year
+    current_year = datetime.now().year
+
+    # Determine the first and last day of the given month in the current year
+    try:
+        start_date = datetime(current_year, month, 1)
+        if month == 12:
+            end_date = datetime(current_year + 1, 1, 1)
+        else:
+            end_date = datetime(current_year, month + 1, 1)
+    except ValueError:
+        return jsonify({'error': 'Invalid month'}), 400
+
+    # SQL query to fetch supply data for the given month
+    query = text("""
+        SELECT 
+            date,
+            ingredient_id,
+            ingredient_name,
+            predicted_quantity_needed
+        FROM 
+            predicted_ingredients
+        WHERE 
+            date >= :start_date AND date < :end_date
+    """)
+
+    # Execute the query
+    with engine.connect() as connection:
+        results = connection.execute(
+            query, 
+            {'start_date': start_date.strftime('%Y-%m-%d'), 'end_date': end_date.strftime('%Y-%m-%d')}
+        ).fetchall()
+
+    # Convert results to a dictionary format using integer indices
+    supply_data_results = [
+        {
+            'date': row[0],
+            'ingredient_id': row[1],
+            'ingredient_name': row[2],
+            'predicted_quantity_needed': row[3]
+        }
+        for row in results
+    ]
+
+    return jsonify(supply_data_results)
+
 if __name__ == '__main__':
     app.run(debug=True)
