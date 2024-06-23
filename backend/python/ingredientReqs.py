@@ -64,3 +64,5 @@ forecasted_ingredients_summary = forecasted_ingredients_df.groupby(['date', 'ing
 # Print the forecasted ingredient requirements summary
 print("Forecasted Ingredient Requirements Summary:")
 print(forecasted_ingredients_summary.head())
+print(forecasted_ingredients_summary.tail())
+forecasted_ingredients_summary.to_csv("forecasted_ingredients.csv", index=False)
