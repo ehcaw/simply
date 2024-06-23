@@ -155,10 +155,9 @@ export default function Component({}) {
     },
   ];
 
-  // Fetch and process data off of component mount
+  // Fetch and process data
   useEffect(() => {
     // don't worry bout the logic
-
     const fetchAndProcessData = async () => {
       Papa.parse<string[]>(totalData, {
         complete: (result) => {
@@ -257,11 +256,66 @@ export default function Component({}) {
    * See @types for this data structure.
    * Equation is as follows: Supply Ratio = Actual Utilized Inventory / Actual Full Total Inventory
    */
-  const data: SupplyRatioData[] = [
+  const supplyData = [
     {
-      date: "Jan 17",
-      Actual: 1000,
-      Utilized: 500,
+      date: "Jan 23",
+      Actual: 234,
+      Utilized: 173,
+    },
+    {
+      date: "Feb 23",
+      Actual: 241,
+      Utilized: 202,
+    },
+    {
+      date: "Mar 23",
+      Actual: 291,
+      Utilized: 279,
+    },
+    {
+      date: "Apr 23",
+      Actual: 101,
+      Utilized: 98,
+    },
+    {
+      date: "May 23",
+      Actual: 318,
+      Utilized: 192,
+    },
+    {
+      date: "Jun 23",
+      Actual: 205,
+      Utilized: 189,
+    },
+    {
+      date: "Jul 23",
+      Actual: 372,
+      Utilized: 370,
+    },
+    {
+      date: "Aug 23",
+      Actual: 341,
+      Utilized: 321,
+    },
+    {
+      date: "Sep 23",
+      Actual: 387,
+      Utilized: 289,
+    },
+    {
+      date: "Oct 23",
+      Actual: 220,
+      Utilized: 200,
+    },
+    {
+      date: "Nov 23",
+      Actual: 372,
+      Utilized: 370,
+    },
+    {
+      date: "Dec 23",
+      Actual: 321,
+      Utilized: 300,
     },
   ].map((item) => ({
     ...item,
@@ -275,7 +329,6 @@ export default function Component({}) {
    * This data is in a raw CSV data format and is parsed by the useEffect hook.
    * It contains actual utilized, actual total, and the ratio between the two.
    */
-
   const totalData = ``; // This was filled with all_sales_data.csv, this needs to be changed back.
 
   const totalPopularData = [
@@ -372,7 +425,7 @@ export default function Component({}) {
             Supply ratio
           </h3>
           <AreaChart
-            data={data}
+            data={supplyData}
             index="date"
             categories={["Actual", "Utilized", "Ratio"]}
             colors={["blue", "violet", "gray"]}
@@ -458,33 +511,28 @@ export default function Component({}) {
 
       {/* Main content */}
       <div className="flex-1 p-4 overflow-auto">
-        <div className="grid grid-rows-2 gap-4 h-full">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="col-span-2">
-              <Card className="h-full">{supplyRatio()}</Card>
-            </div>
-            <div>
-              <Card className="h-full">{monthlyTrend()}</Card>
-            </div>
+        <div className="grid grid-cols-3 gap-4 h-full">
+          <div className="col-span-2">
+            <Card className="h-full mb-4">{supplyRatio()}</Card>
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <BentoGrid className="w-max mx-auto">
-                {dualItems.map((item, i) => (
-                  <BentoGridItem
-                    key={i}
-                    title={item.title}
-                    description={item.description}
-                    header={item.header}
-                    icon={item.icon}
-                    className={i === 3 || i === 6 ? "md:col-span-2" : ""}
-                  />
-                ))}
-              </BentoGrid>
-            </div>
-            <div className="col-span-2">
-              <Card className="h-full">{totalTrending()}</Card>
-            </div>
+          <div>
+            <Card className="h-full mb-4">{monthlyTrend()}</Card>
+          </div>
+          <div>
+            <BentoGrid className="flex flex-col gap-4">
+              {dualItems.map((item, i) => (
+                <BentoGridItem
+                  key={i}
+                  title={item.title}
+                  description={item.description}
+                  header={item.header}
+                  icon={item.icon}
+                />
+              ))}
+            </BentoGrid>
+          </div>
+          <div className="col-span-2">
+            <Card className="h-full">{totalTrending()}</Card>
           </div>
         </div>
       </div>
