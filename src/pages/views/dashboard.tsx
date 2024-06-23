@@ -3,8 +3,8 @@
  * @see https://v0.dev/t/psR1ZUYkUjf
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage } from "@/components/ui/Avatar";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import {
   Table,
   TableHeader,
@@ -12,45 +12,17 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/Table";
+import { Badge } from "@/components/ui/Badge";
 import { JSX, SVGProps, ClassAttributes, HTMLAttributes } from "react";
 import { LineChartEx } from "@/components/tremor/linechart";
+import { Dashboard } from "@/components/ui/Dashboard";
 
 export default function Component() {
   return (
     <div className="flex h-screen">
       <aside className="w-64 bg-[#3b3b3b] p-5 text-white">
-        <div className="flex flex-col space-y-6">
-          <div className="flex items-center space-x-3">
-            <LayoutDashboardIcon className="h-6 w-6" />
-            <span>Dashboard</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <SettingsIcon className="h-6 w-6" />
-            <span>Settings</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <UserIcon className="h-6 w-6" />
-            <span>User Profile</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <BarChartIcon className="h-6 w-6" />
-            <span>Statistics</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <MessagesSquareIcon className="h-6 w-6" />
-            <span>Messages</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <SignalIcon className="h-6 w-6" />
-            <span>Notifications</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <HandHelpingIcon className="h-6 w-6" />
-            <span>Help</span>
-          </div>
-        </div>
+        <Dashboard />
       </aside>
       <main className="flex-1 bg-white p-8">
         <header className="flex justify-between items-center mb-6">
