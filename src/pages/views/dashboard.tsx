@@ -1,6 +1,6 @@
 /**
  * v0 by Vercel.
- * @see https://v0.dev/t/ZFrnZdR0Tlv
+ * @see https://v0.dev/t/psR1ZUYkUjf
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -14,13 +14,13 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ResponsiveLine } from "@nivo/line";
-import { JSX, ClassAttributes, HTMLAttributes, SVGProps } from "react";
+import { JSX, SVGProps, ClassAttributes, HTMLAttributes } from "react";
+import { LineChartEx } from "@/components/tremor/linechart";
 
 export default function Component() {
   return (
     <div className="flex h-screen">
-      <aside className="w-64 bg-[#5C4B99] p-5 text-white">
+      <aside className="w-64 bg-[#3b3b3b] p-5 text-white">
         <div className="flex flex-col space-y-6">
           <div className="flex items-center space-x-3">
             <LayoutDashboardIcon className="h-6 w-6" />
@@ -63,15 +63,16 @@ export default function Component() {
           </div>
         </header>
         <section className="grid grid-cols-3 gap-6">
-          <Card className="col-span-2 bg-[#EDE7F6]">
+          <Card className="col-span-2 bg-[#3b3b3b]">
             <CardHeader>
               <CardTitle>Performance Overview</CardTitle>
+              <LineChartEx></LineChartEx>
             </CardHeader>
             <CardContent>
               <CurvedlineChart className="w-full h-[300px]" />
             </CardContent>
           </Card>
-          <Card className="bg-[#EDE7F6]">
+          <Card className="bg-[#3b3b3b]">
             <CardHeader>
               <CardTitle>Tasks</CardTitle>
             </CardHeader>
@@ -121,7 +122,7 @@ export default function Component() {
         </section>
         <section className="mt-6">
           <h2 className="text-xl font-semibold mb-4">Chat</h2>
-          <div className="border rounded-lg h-[300px] w-full max-w-sm" />
+          <div className="bg-[#3b3b3b] border rounded-lg h-[300px] w-full max-w-sm" />
         </section>
       </main>
     </div>
@@ -156,79 +157,7 @@ function CurvedlineChart(
     ClassAttributes<HTMLDivElement> &
     HTMLAttributes<HTMLDivElement>
 ) {
-  return (
-    <div {...props}>
-      <ResponsiveLine
-        data={[
-          {
-            id: "Desktop",
-            data: [
-              { x: "Jan", y: 43 },
-              { x: "Feb", y: 137 },
-              { x: "Mar", y: 61 },
-              { x: "Apr", y: 145 },
-              { x: "May", y: 26 },
-              { x: "Jun", y: 154 },
-            ],
-          },
-          {
-            id: "Mobile",
-            data: [
-              { x: "Jan", y: 60 },
-              { x: "Feb", y: 48 },
-              { x: "Mar", y: 177 },
-              { x: "Apr", y: 78 },
-              { x: "May", y: 96 },
-              { x: "Jun", y: 204 },
-            ],
-          },
-        ]}
-        margin={{ top: 10, right: 10, bottom: 40, left: 40 }}
-        xScale={{
-          type: "point",
-        }}
-        yScale={{
-          type: "linear",
-          min: 0,
-          max: "auto",
-        }}
-        curve="monotoneX"
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 0,
-          tickPadding: 16,
-        }}
-        axisLeft={{
-          tickSize: 0,
-          tickValues: 5,
-          tickPadding: 16,
-        }}
-        colors={["#2563eb", "#e11d48"]}
-        pointSize={6}
-        useMesh={true}
-        gridYValues={6}
-        theme={{
-          tooltip: {
-            chip: {
-              borderRadius: "9999px",
-            },
-            container: {
-              fontSize: "12px",
-              textTransform: "capitalize",
-              borderRadius: "6px",
-            },
-          },
-          grid: {
-            line: {
-              stroke: "#f3f4f6",
-            },
-          },
-        }}
-        role="application"
-      />
-    </div>
-  );
+  return <div {...props}></div>;
 }
 
 function HandHelpingIcon(
