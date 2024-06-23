@@ -1,4 +1,12 @@
-import { AreaChart, BarChart, Card, Flex, List, ListItem } from "@tremor/react";
+import {
+  AreaChart,
+  BarChart,
+  BarList,
+  Card,
+  Flex,
+  List,
+  ListItem,
+} from "@tremor/react";
 import { Pencil2Icon, TriangleRightIcon } from "@radix-ui/react-icons";
 import { SideBar } from "@/components/ui/SideBar";
 import { useState, useEffect } from "react";
@@ -6,6 +14,7 @@ import Papa from "papaparse";
 import { motion } from "framer-motion";
 import { formatWeekRange, valueFormatter } from "@/utils";
 import { SupplyRatioData } from "@/models";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 
 type DrinkId = number;
 type DrinkName = string;
@@ -50,16 +59,108 @@ export default function Component({}) {
   >({});
   const [selectedMonth, setSelectedMonth] = useState<string>("Feb 2024");
   const [sideIsVisible, setSideIsVisible] = useState<boolean>(true);
+  const [extended, setExtended] = useState(false);
 
   // Static variables
   const graphs = ["Supply ratio", "Weekly trends", "Monthly sales"];
   const months = Object.keys(monthlyTrends);
 
+  const ClairvoyantSkeleton = () => {
+    const variants = {
+      initial: {
+        backgroundPosition: "0 50%",
+      },
+      animate: {
+        backgroundPosition: ["0, 50%", "100% 50%", "0 50%"],
+      },
+    };
+
+    return (
+      <motion.div
+        initial="initial"
+        animate="animate"
+        variants={variants}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+        className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] rounded-lg bg-dot-black/[0.2] flex-col space-y-2"
+        style={{
+          background:
+            "linear-gradient(-45deg, #f0fff0, #4d1228, #e607e2, #20332e)",
+          backgroundSize: "400% 400%",
+        }}
+      >
+        <motion.div className="h-full w-full rounded-lg"></motion.div>
+      </motion.div>
+    );
+  };
+
+  const PasssengerSkeleton = () => {
+    const variants = {
+      initial: {
+        backgroundPosition: "0 50%",
+      },
+      animate: {
+        backgroundPosition: ["0, 50%", "100% 50%", "0 50%"],
+      },
+    };
+
+    return (
+      <motion.div
+        initial="initial"
+        animate="animate"
+        variants={variants}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+        className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] rounded-lg bg-dot-black/[0.2] flex-col space-y-2"
+        style={{
+          background:
+            "linear-gradient(-45deg, #205278, #e73c7e, #23a6d5, #232078)",
+          backgroundSize: "400% 400%",
+        }}
+      >
+        <motion.div className="h-full w-full rounded-lg"></motion.div>
+      </motion.div>
+    );
+  };
+
+  const dualItems = [
+    {
+      title: "Clairvoyant",
+      description: (
+        <span className="text-sm">Use predictions to guide your business.</span>
+      ),
+      header: <ClairvoyantSkeleton />,
+      className: "md:col-span-1",
+      icon: <></>,
+      url: "",
+    },
+    {
+      title: "Passenger",
+      description: (
+        <span className="text-sm">
+          Receive AI-powered suggestions for your business, utilizing your data
+          to the fullest extent.
+        </span>
+      ),
+      header: <PasssengerSkeleton />,
+      className: "md:col-span-1",
+      icon: <></>,
+      url: "",
+    },
+  ];
+
   // Fetch and process data off of component mount
   useEffect(() => {
     // don't worry bout the logic
+
     const fetchAndProcessData = async () => {
-      Papa.parse<string[]>(csvData, {
+      Papa.parse<string[]>(totalData, {
         complete: (result) => {
           const salesData: SaleData[] = result.data.slice(1).map((row) => ({
             sale_id: parseInt(row[0], 10),
@@ -167,7 +268,58 @@ export default function Component({}) {
     Ratio: item.Utilized === 0 ? 0 : item.Utilized / item.Actual,
   }));
 
-  const csvData = ``; // This was filled with all_sales_data.csv, this needs to be changed back.
+  // Graphs that rely on total sales data
+
+  /**
+   * Data for the total supply ratio graph
+   * This data is in a raw CSV data format and is parsed by the useEffect hook.
+   * It contains actual utilized, actual total, and the ratio between the two.
+   */
+
+  const totalData = ``; // This was filled with all_sales_data.csv, this needs to be changed back.
+
+  const totalPopularData = [
+    {
+      name: "/home",
+      value: 2019,
+    },
+    {
+      name: "/blocks",
+      value: 1053,
+    },
+    {
+      name: "/components",
+      value: 997,
+    },
+    {
+      name: "/docs/getting-started/installation",
+      value: 982,
+    },
+    {
+      name: "/docs/components/button",
+      value: 782,
+    },
+    {
+      name: "/docs/components/table",
+      value: 752,
+    },
+    {
+      name: "/docs/components/area-chart",
+      value: 741,
+    },
+    {
+      name: "/docs/components/badge",
+      value: 750,
+    },
+  ]; // This should be filled with data parsed from all_sales_data.csv and renamed accordingly
+
+  const doubleSection = () => {
+    return (
+      <>
+        <Card></Card>
+      </>
+    );
+  };
 
   /**
    * Data for the monthly trends graph
@@ -251,14 +403,47 @@ export default function Component({}) {
         </Card>
       </>
     );
+  };
 
-    const totalTrending = () => {
-      return <></>;
-    };
+  const totalTrending = () => {
+    return (
+      <>
+        <Card className="p-0 sm:mx-auto sm:max-w-lg">
+          <div className="flex items-center justify-between border-b border-tremor-border p-6 dark:border-dark-tremor-border">
+            <p className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+              Top pages
+            </p>
+            <p className="text-tremor-label font-medium uppercase text-tremor-content dark:text-dark-tremor-content">
+              Visitors
+            </p>
+          </div>
+          <div
+            className={`overflow-hidden p-6 ${extended ? "" : "max-h-[260px]"}`}
+          >
+            <BarList data={totalPopularData} valueFormatter={valueFormatter} />
+          </div>
+
+          <div
+            className={`flex justify-center ${
+              extended
+                ? "px-6 pb-6"
+                : "absolute inset-x-0 bottom-0 rounded-b-tremor-default bg-gradient-to-t from-tremor-background to-transparent py-7 dark:from-dark-tremor-background"
+            }`}
+          >
+            <button
+              className="flex items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background px-2.5 py-2 text-tremor-default font-medium text-tremor-content-strong shadow-tremor-input hover:bg-tremor-background-muted dark:border-dark-tremor-border dark:bg-dark-tremor-background dark:text-dark-tremor-content-strong dark:shadow-dark-tremor-input hover:dark:bg-dark-tremor-background-muted"
+              onClick={() => setExtended(!extended)}
+            >
+              {extended ? "Show less" : "Show more"}
+            </button>
+          </div>
+        </Card>
+      </>
+    );
   };
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full bg-[#001122]">
       {/* Sidebar */}
       <motion.aside
         className="bg-[#3b3b3b] p-5 text-white"
@@ -284,10 +469,21 @@ export default function Component({}) {
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <Card className="h-full">{supplyRatio()}</Card>
+              <BentoGrid className="w-max mx-auto">
+                {dualItems.map((item, i) => (
+                  <BentoGridItem
+                    key={i}
+                    title={item.title}
+                    description={item.description}
+                    header={item.header}
+                    icon={item.icon}
+                    className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+                  />
+                ))}
+              </BentoGrid>
             </div>
             <div className="col-span-2">
-              <Card className="h-full">{supplyRatio()}</Card>
+              <Card className="h-full">{totalTrending()}</Card>
             </div>
           </div>
         </div>
