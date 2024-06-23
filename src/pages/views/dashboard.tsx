@@ -1,7 +1,9 @@
 import { AreaChart, Card, List, ListItem } from "@tremor/react";
-import { Pencil2Icon } from "@radix-ui/react-icons";
-import { Dashboard } from "@/components/ui/SideBar";
+import { Pencil2Icon, HamburgerMenuIcon} from "@radix-ui/react-icons";
+import { SideBar } from "@/components/ui/SideBar";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -9,6 +11,7 @@ function classNames(...classes: string[]) {
 
 export default function Component() {
   const router = useRouter();
+  const [isVisible, setIsVisible] = useState<boolean>(true);
 
   const summary = [
     {
@@ -94,13 +97,24 @@ export default function Component() {
 
   return (
     <div className="flex h-screen">
-      {/* navigator bar on the siiide */}
-      <aside className="w-1/6 bg-[#3b3b3b] p-5 text-white">
-        <Dashboard />
-      </aside>
+      <motion.aside
+        className="bg-[#3b3b3b] p-5 text-white"
+        initial={{ width: "0" }}
+        animate={{ width: isVisible ? "16.666%" : "0" }}
+        transition={{ duration: 0.5 }}
+      >
+        {isVisible && <SideBar isVisible={true} />}
+      </motion.aside>
 
       {/* main area n shi */}
       <main className="flex-1 bg-white p-8">
+        {/* Button to toggle sidebar */}
+        <button
+          className="fixed top-5 left-5 z-50 p-2 bg-gray-800 text-white rounded-full"
+          onClick={() => setIsVisible(!isVisible)}
+        >
+          <HamburgerMenuIcon className="w-6 h-6" />
+        </button>
         {/* data analytics n shi */}
         <section className="grid grid-cols-3 gap-6">
           <Card className="sm:mx-auto sm:max-w-lg">

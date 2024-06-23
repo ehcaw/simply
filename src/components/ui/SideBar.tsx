@@ -7,7 +7,7 @@ import {
   BellDotIcon,
 } from "lucide-react";
 
-export function Dashboard() {
+export function SideBar(isVisible: { isVisible: boolean}) {
   return (
     <div className="flex flex-col space-y-6">
       <div className="flex space-x-2 hover:bg-gray-500 rounded-xl hover:bg-opacity-30 hover:opacity-30">
