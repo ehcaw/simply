@@ -251,10 +251,10 @@ export default function Component({}) {
         </Card>
       </>
     );
-  };
 
-  const totalTrending = () => {
-    return <></>;
+    const totalTrending = () => {
+      return <></>;
+    };
   };
 
   return (
@@ -270,26 +270,37 @@ export default function Component({}) {
       >
         <SideBar isVisible={sideIsVisible} />
       </motion.aside>
+      <div className="flex h-screen w-full">
+        {/* Sidebar */}
+        <motion.aside
+          className="bg-[#3b3b3b] p-5 text-white"
+          initial={{ width: "0" }}
+          animate={{ width: sideIsVisible ? "16.666%" : "70px" }}
+          transition={{ duration: 0.5 }}
+          onMouseEnter={() => setSideIsVisible(true)}
+          onMouseLeave={() => setSideIsVisible(false)}
+        >
+          <SideBar isVisible={sideIsVisible} />
+        </motion.aside>
 
-      {/* Main content */}
-      <div className="flex-1 p-4 overflow-auto">
-        <div className="grid grid-rows-2 gap-4 h-full w-full">
-          <div className="grid grid-cols-3 gap-4 w-full h-1/2">
-            <div className="col-span-2 flex items-center justify-center">
-              <Card className="mx-auto max-w-full w-full h-full">
-                {supplyRatio()}
-              </Card>
+        {/* Main content */}
+        <div className="flex-1 p-4 overflow-auto">
+          <div className="grid grid-rows-2 gap-4 h-full">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-2">
+                <Card className="h-full">{supplyRatio()}</Card>
+              </div>
+              <div>
+                <Card className="h-full">{monthlyTrend()}</Card>
+              </div>
             </div>
-            <div className="flex items-center justify-center">
-              <Card className="w-full h-full">{monthlyTrend()}</Card>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-4 w-full h-1/2">
-            <div className="flex items-center justify-center">
-              <Card className="w-full h-full">{supplyRatio()}</Card>
-            </div>
-            <div className="col-span-2 flex items-center justify-center">
-              <Card className="w-full h-full">{supplyRatio()}</Card>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Card className="h-full">{supplyRatio()}</Card>
+              </div>
+              <div className="col-span-2">
+                <Card className="h-full">{supplyRatio()}</Card>
+              </div>
             </div>
           </div>
         </div>
