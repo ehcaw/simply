@@ -33,8 +33,3 @@ all_sales_data = pd.concat([sales_data, fake_sales_data], ignore_index=True)
 
 # Save the extended sales data to a CSV file
 all_sales_data.to_csv('all_sales_data.csv', index=False)
-
-# Print to verify the new combined sales data
-print("Extended Sales Data:")
-print(all_sales_data.head())
-print(all_sales_data.tail())

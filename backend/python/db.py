@@ -24,10 +24,3 @@ ingredients_data = pd.read_sql("SELECT * FROM ingredients", engine)
 drink_ingredients_data = pd.read_sql("SELECT * FROM drink_ingredients", engine)
 sales_data = pd.read_sql("SELECT * FROM sales", engine)
 supplies_ordered_data = pd.read_sql("SELECT * FROM supplies_ordered", engine)
-
-# Print to verify data loading
-print("Drinks Data:", drinks_data.head())
-print("Ingredients Data:", ingredients_data.head())
-print("Drink Ingredients Data:", drink_ingredients_data.head())
-print("Sales Data:", sales_data.head())
-print("Supplies Ordered Data:", supplies_ordered_data.head())

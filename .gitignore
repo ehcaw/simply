@@ -3,3 +3,4 @@ node_modules
 /backend/Cargo.lock
 .env.local
 .next
+ingredient_forecasting_model.h5
