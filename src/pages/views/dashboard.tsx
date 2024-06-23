@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { JSX, SVGProps, ClassAttributes, HTMLAttributes } from "react";
+import { LineChartEx } from "@/components/tremor/linechart";
 
 export default function Component() {
   return (
@@ -65,6 +66,7 @@ export default function Component() {
           <Card className="col-span-2 bg-[#3b3b3b]">
             <CardHeader>
               <CardTitle>Performance Overview</CardTitle>
+              <LineChartEx></LineChartEx>
             </CardHeader>
             <CardContent>
               <CurvedlineChart className="w-full h-[300px]" />
