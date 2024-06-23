@@ -496,10 +496,10 @@ export default function Component({}) {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#001122]">
+    <div className="flex h-screen w-full bg-[#001c3d]">
       {/* Sidebar */}
       <motion.aside
-        className="bg-[#3b3b3b] p-5 text-white"
+        className="bg-[#001c3d] p-5 text-white"
         initial={{ width: "0" }}
         animate={{ width: sideIsVisible ? "16.666%" : "70px" }}
         transition={{ duration: 0.5 }}
