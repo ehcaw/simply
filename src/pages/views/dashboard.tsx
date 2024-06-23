@@ -270,37 +270,24 @@ export default function Component({}) {
       >
         <SideBar isVisible={sideIsVisible} />
       </motion.aside>
-      <div className="flex h-screen w-full">
-        {/* Sidebar */}
-        <motion.aside
-          className="bg-[#3b3b3b] p-5 text-white"
-          initial={{ width: "0" }}
-          animate={{ width: sideIsVisible ? "16.666%" : "70px" }}
-          transition={{ duration: 0.5 }}
-          onMouseEnter={() => setSideIsVisible(true)}
-          onMouseLeave={() => setSideIsVisible(false)}
-        >
-          <SideBar isVisible={sideIsVisible} />
-        </motion.aside>
 
-        {/* Main content */}
-        <div className="flex-1 p-4 overflow-auto">
-          <div className="grid grid-rows-2 gap-4 h-full">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2">
-                <Card className="h-full">{supplyRatio()}</Card>
-              </div>
-              <div>
-                <Card className="h-full">{monthlyTrend()}</Card>
-              </div>
+      {/* Main content */}
+      <div className="flex-1 p-4 overflow-auto">
+        <div className="grid grid-rows-2 gap-4 h-full">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-2">
+              <Card className="h-full">{supplyRatio()}</Card>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Card className="h-full">{supplyRatio()}</Card>
-              </div>
-              <div className="col-span-2">
-                <Card className="h-full">{supplyRatio()}</Card>
-              </div>
+            <div>
+              <Card className="h-full">{monthlyTrend()}</Card>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Card className="h-full">{supplyRatio()}</Card>
+            </div>
+            <div className="col-span-2">
+              <Card className="h-full">{supplyRatio()}</Card>
             </div>
           </div>
         </div>
