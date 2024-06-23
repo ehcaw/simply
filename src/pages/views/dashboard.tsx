@@ -11,7 +11,7 @@ function classNames(...classes: string[]) {
 
 export default function Component() {
   const router = useRouter();
-  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [sideIsVisible, setSideIsVisible] = useState<boolean>(true);
 
   const summary = [
     {
@@ -100,21 +100,16 @@ export default function Component() {
       <motion.aside
         className="bg-[#3b3b3b] p-5 text-white"
         initial={{ width: "0" }}
-        animate={{ width: isVisible ? "16.666%" : "0" }}
+        animate={{ width: sideIsVisible ? "16.666%" : "70px" }}
         transition={{ duration: 0.5 }}
+        onMouseEnter={() => setSideIsVisible(true)}
+        onMouseLeave={() => setSideIsVisible(false)}
       >
-        {isVisible && <SideBar isVisible={true} />}
+        <SideBar isVisible={sideIsVisible} />
       </motion.aside>
 
       {/* main area n shi */}
       <main className="flex-1 bg-white p-8">
-        {/* Button to toggle sidebar */}
-        <button
-          className="fixed top-5 left-5 z-50 p-2 bg-gray-800 text-white rounded-full"
-          onClick={() => setIsVisible(!isVisible)}
-        >
-          <HamburgerMenuIcon className="w-6 h-6" />
-        </button>
         {/* data analytics n shi */}
         <section className="grid grid-cols-3 gap-6">
           <Card className="sm:mx-auto sm:max-w-lg">
