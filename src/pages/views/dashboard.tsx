@@ -100,7 +100,7 @@ export default function Component() {
       <motion.aside
         className="bg-[#3b3b3b] p-5 text-white"
         initial={{ width: "0" }}
-        animate={{ width: sideIsVisible ? "16.666%" : "70px" }}
+        animate={{ width: sideIsVisible ? "16.666%" : "60px" }}
         transition={{ duration: 0.5 }}
         onMouseEnter={() => setSideIsVisible(true)}
         onMouseLeave={() => setSideIsVisible(false)}
