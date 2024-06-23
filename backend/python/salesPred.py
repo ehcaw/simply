@@ -54,3 +54,5 @@ plt.title('Forecast of Sales for the Next 30 Days')
 plt.xlabel('Date')
 plt.ylabel('Quantity Sold')
 plt.show()
+
+
