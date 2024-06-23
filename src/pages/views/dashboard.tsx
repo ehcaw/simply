@@ -1,18 +1,9 @@
-import {
-  AreaChart,
-  BarChart,
-  BarList,
-  Card,
-  Flex,
-  List,
-  ListItem,
-} from "@tremor/react";
-import { Pencil2Icon, TriangleRightIcon } from "@radix-ui/react-icons";
+import { AreaChart, BarChart, BarList, Card } from "@tremor/react";
 import { SideBar } from "@/components/ui/SideBar";
 import { useState, useEffect } from "react";
 import Papa from "papaparse";
 import { motion } from "framer-motion";
-import { formatWeekRange, valueFormatter } from "@/utils";
+import { valueFormatter } from "@/utils";
 import { SupplyRatioData } from "@/models";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 
@@ -31,6 +22,11 @@ interface WeeklyTrend {
   topDrinkId: DrinkId;
   sales: number;
   drinkSales: Record<DrinkId, number>;
+}
+
+interface DrinkSales {
+  name: string;
+  value: number;
 }
 
 // ! This needs to be utilized
@@ -54,15 +50,15 @@ const drinkIdToName: Record<DrinkId, DrinkName> = {
 
 export default function Component({}) {
   // State variables
+  const [selectedMonth, setSelectedMonth] = useState<string>("Feb 2024");
+  const [sideIsVisible, setSideIsVisible] = useState<boolean>(true);
   const [monthlyTrends, setMonthlyTrends] = useState<
     Record<string, WeeklyTrend[]>
   >({});
-  const [selectedMonth, setSelectedMonth] = useState<string>("Feb 2024");
-  const [sideIsVisible, setSideIsVisible] = useState<boolean>(true);
-  const [extended, setExtended] = useState(false);
+  const [totalPopularData, setTotalPopularData] = useState<DrinkSales[]>([]);
+  const [supplyRatioData, setSupplyRatioData] = useState<SupplyRatioData[]>([]);
 
   // Static variables
-  const graphs = ["Supply ratio", "Weekly trends", "Monthly sales"];
   const months = Object.keys(monthlyTrends);
 
   const ClairvoyantSkeleton = () => {
@@ -155,7 +151,25 @@ export default function Component({}) {
     },
   ];
 
-  // Fetch and process data
+  // Fetch and process data off rip
+  useEffect(() => {
+    // Assuming you have your CSV data in a string variable called 'csvData'
+    Papa.parse<string[]>(totalData, {
+      complete: (result) => {
+        const salesData: SaleData[] = result.data.slice(1).map((row) => ({
+          sale_id: parseInt(row[0], 10),
+          drink_id: parseInt(row[1], 10),
+          sale_date: row[2],
+          quantity_sold: parseInt(row[3], 10),
+        }));
+
+        processData(salesData);
+      },
+      header: false,
+      skipEmptyLines: true,
+    });
+  }, []);
+
   useEffect(() => {
     // don't worry bout the logic
     const fetchAndProcessData = async () => {
@@ -227,17 +241,11 @@ export default function Component({}) {
     fetchAndProcessData();
   }, []);
 
+  useEffect(() => {
+    setSupplyRatioData(parseSupplyRatioData(supplyData));
+  }, []);
+
   // Helper functions
-  const getPreviousGraph = (current: string) => {
-    const index = graphs.indexOf(current);
-    return graphs[(index - 1 + graphs.length) % graphs.length];
-  };
-
-  const getNextGraph = (current: string) => {
-    const index = graphs.indexOf(current);
-    return graphs[(index + 1) % graphs.length];
-  };
-
   const getPreviousMonth = (currentMonth: string) => {
     const currentIndex = months.indexOf(currentMonth);
     return months[(currentIndex - 1 + months.length) % months.length];
@@ -248,6 +256,52 @@ export default function Component({}) {
     return months[(currentIndex + 1) % months.length];
   };
 
+  const processData = (salesData: SaleData[]) => {
+    const totalSales: Record<number, number> = {};
+
+    salesData.forEach((sale) => {
+      if (!totalSales[sale.drink_id]) {
+        totalSales[sale.drink_id] = 0;
+      }
+      totalSales[sale.drink_id] += sale.quantity_sold;
+    });
+
+    const formattedData: DrinkSales[] = Object.entries(totalSales)
+      .map(([drinkId, totalSold]) => ({
+        name: drinkIdToName[parseInt(drinkId)] || `${drinkId}`,
+        value: totalSold,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 8);
+
+    setTotalPopularData(formattedData);
+  };
+
+  const parseSupplyRatioData = (csvData: string): SupplyRatioData[] => {
+    const parsedData: SupplyRatioData[] = [];
+
+    Papa.parse<string[]>(csvData, {
+      complete: (result) => {
+        parsedData.push(
+          ...result.data.slice(1).map((row, index) => {
+            const actual = parseInt(row[0], 10);
+            const utilized = parseInt(row[1], 10);
+            return {
+              date: `Week ${index + 1}`, // You might want to replace this with actual dates
+              Actual: actual,
+              Utilized: utilized,
+              Predicted: parseInt(row[2], 10),
+              Ratio: utilized === 0 ? 0 : utilized / actual,
+            };
+          })
+        );
+      },
+      header: false,
+      skipEmptyLines: true,
+    });
+
+    return parsedData;
+  };
   // Data pertaining to graphs
 
   /**
@@ -256,71 +310,6 @@ export default function Component({}) {
    * See @types for this data structure.
    * Equation is as follows: Supply Ratio = Actual Utilized Inventory / Actual Full Total Inventory
    */
-  const supplyData = [
-    {
-      date: "Jan 23",
-      Actual: 234,
-      Utilized: 173,
-    },
-    {
-      date: "Feb 23",
-      Actual: 241,
-      Utilized: 202,
-    },
-    {
-      date: "Mar 23",
-      Actual: 291,
-      Utilized: 279,
-    },
-    {
-      date: "Apr 23",
-      Actual: 101,
-      Utilized: 98,
-    },
-    {
-      date: "May 23",
-      Actual: 318,
-      Utilized: 192,
-    },
-    {
-      date: "Jun 23",
-      Actual: 205,
-      Utilized: 189,
-    },
-    {
-      date: "Jul 23",
-      Actual: 372,
-      Utilized: 370,
-    },
-    {
-      date: "Aug 23",
-      Actual: 341,
-      Utilized: 321,
-    },
-    {
-      date: "Sep 23",
-      Actual: 387,
-      Utilized: 289,
-    },
-    {
-      date: "Oct 23",
-      Actual: 220,
-      Utilized: 200,
-    },
-    {
-      date: "Nov 23",
-      Actual: 372,
-      Utilized: 370,
-    },
-    {
-      date: "Dec 23",
-      Actual: 321,
-      Utilized: 300,
-    },
-  ].map((item) => ({
-    ...item,
-    Ratio: item.Utilized === 0 ? 0 : item.Utilized / item.Actual,
-  }));
 
   // Graphs that rely on total sales data
 
@@ -329,50 +318,11 @@ export default function Component({}) {
    * This data is in a raw CSV data format and is parsed by the useEffect hook.
    * It contains actual utilized, actual total, and the ratio between the two.
    */
-  const totalData = ``; // This was filled with all_sales_data.csv, this needs to be changed back.
+  const totalData = ``;
 
-  const totalPopularData = [
-    {
-      name: "/home",
-      value: 2019,
-    },
-    {
-      name: "/blocks",
-      value: 1053,
-    },
-    {
-      name: "/components",
-      value: 997,
-    },
-    {
-      name: "/docs/getting-started/installation",
-      value: 982,
-    },
-    {
-      name: "/docs/components/button",
-      value: 782,
-    },
-    {
-      name: "/docs/components/table",
-      value: 752,
-    },
-    {
-      name: "/docs/components/area-chart",
-      value: 741,
-    },
-    {
-      name: "/docs/components/badge",
-      value: 750,
-    },
-  ]; // This should be filled with data parsed from all_sales_data.csv and renamed accordingly
-
-  const doubleSection = () => {
-    return (
-      <>
-        <Card></Card>
-      </>
-    );
-  };
+  const supplyData = ``;
+  // This was filled with all_sales_data.csv, this needs to be changed back.
+  // This should be filled with data parsed from all_sales_data.csv and renamed accordingly
 
   /**
    * Data for the monthly trends graph
@@ -384,7 +334,7 @@ export default function Component({}) {
   const monthlyTrend = () => {
     return (
       <>
-        <Card className=" w-full h-full mx-mt-4 relative">
+        <Card className="mt-4 relative">
           <h3 className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
             Weekly trends - <b>{selectedMonth}</b>
           </h3>
@@ -420,12 +370,12 @@ export default function Component({}) {
   const supplyRatio = () => {
     return (
       <>
-        <Card className="w-full sm:mx-auto sm:max-w-lg">
+        <Card className="sm:mx-auto sm:max-w-lg">
           <h3 className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
             Supply ratio
           </h3>
           <AreaChart
-            data={supplyData}
+            data={supplyRatioData}
             index="date"
             categories={["Actual", "Utilized", "Ratio"]}
             colors={["blue", "violet", "gray"]}
@@ -434,7 +384,7 @@ export default function Component({}) {
             showYAxis={false}
             showGradient={false}
             startEndOnly={true}
-            className="mt-6 h-full w-full"
+            className="mt-6 h-32"
           />
           <Card className="mx-auto mt-5 max-w-full">
             <p className="text-xl font-semibold text-white dark:text-dark-tremor-content">
@@ -464,31 +414,14 @@ export default function Component({}) {
         <Card className="p-0 sm:mx-auto sm:max-w-lg">
           <div className="flex items-center justify-between border-b border-tremor-border p-6 dark:border-dark-tremor-border">
             <p className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-              Top pages
+              Most popular items of all-time
             </p>
             <p className="text-tremor-label font-medium uppercase text-tremor-content dark:text-dark-tremor-content">
-              Visitors
+              total sales
             </p>
           </div>
-          <div
-            className={`overflow-hidden p-6 ${extended ? "" : "max-h-[260px]"}`}
-          >
+          <div className={`overflow-hidden p-6 max-h-[260px]}`}>
             <BarList data={totalPopularData} valueFormatter={valueFormatter} />
-          </div>
-
-          <div
-            className={`flex justify-center ${
-              extended
-                ? "px-6 pb-6"
-                : "absolute inset-x-0 bottom-0 rounded-b-tremor-default bg-gradient-to-t from-tremor-background to-transparent py-7 dark:from-dark-tremor-background"
-            }`}
-          >
-            <button
-              className="flex items-center justify-center rounded-tremor-small border border-tremor-border bg-tremor-background px-2.5 py-2 text-tremor-default font-medium text-tremor-content-strong shadow-tremor-input hover:bg-tremor-background-muted dark:border-dark-tremor-border dark:bg-dark-tremor-background dark:text-dark-tremor-content-strong dark:shadow-dark-tremor-input hover:dark:bg-dark-tremor-background-muted"
-              onClick={() => setExtended(!extended)}
-            >
-              {extended ? "Show less" : "Show more"}
-            </button>
           </div>
         </Card>
       </>
@@ -496,10 +429,10 @@ export default function Component({}) {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#001c3d]">
+    <div className="flex h-screen w-full bg-[#001122]">
       {/* Sidebar */}
       <motion.aside
-        className="bg-[#001c3d] p-5 text-white"
+        className="bg-[#3b3b3b] p-5 text-white"
         initial={{ width: "0" }}
         animate={{ width: sideIsVisible ? "16.666%" : "70px" }}
         transition={{ duration: 0.5 }}
@@ -510,16 +443,16 @@ export default function Component({}) {
       </motion.aside>
 
       {/* Main content */}
-      <div className="flex-1 p-4 overflow-auto">
+      <div className="flex-1 overflow-auto">
         <div className="grid grid-cols-3 gap-4 h-full">
           <div className="col-span-2">
-            <Card className="h-full mb-4">{supplyRatio()}</Card>
+            <Card className="h-[95%]">{supplyRatio()}</Card>
           </div>
           <div>
-            <Card className="h-full mb-4">{monthlyTrend()}</Card>
+            <Card className="h-[95%] mb-6">{monthlyTrend()}</Card>
           </div>
           <div>
-            <BentoGrid className="flex flex-col gap-4">
+            <BentoGrid className="flex flex-col">
               {dualItems.map((item, i) => (
                 <BentoGridItem
                   key={i}
