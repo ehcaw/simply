@@ -2,3 +2,4 @@ node_modules
 /backend/target
 /backend/Cargo.lock
 .env.local
+.next

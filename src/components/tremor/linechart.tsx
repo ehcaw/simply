@@ -1,4 +1,5 @@
 import { Card, LineChart } from "@tremor/react";
+import { ValueFormatter } from "@tremor/react";
 
 const hardCodedData = [
   {
@@ -13,40 +14,48 @@ const hardCodedData = [
   },
   {
     date: "Mar '24",
-    "Pasta Orders": 75,
-    "Pasta Purchases": 40,
+    pastaorders: 75,
+    pastapurchases: 40,
   },
   {
     date: "Apr '24",
-    "Pasta Orders": 52,
-    "Pasta Purchases": 48,
+    pastaorders: 52,
+    pastapurchases: 48,
   },
   {
     date: "May '24",
-    "Pasta Orders": 40,
-    "Pasta Purchases": 52,
+    pastaorders: 40,
+    pastapurchases: 52,
   },
   {
     date: "June '24",
-    "Pasta Orders": 60,
-    "Pasta Purchases": 52,
+    pastaorders: 60,
+    pastapurchases: 52,
   },
 ];
 
-const dataFormatter = (number: number) =>
-  `$${Intl.NumberFormat("us").format(number).toString()}`;
+const valueFormatter: ValueFormatter = function (number: number) {
+  return `$${number}`;
+};
 
-export function LineChartEx() {
+export function LineChartUsageExample() {
   return (
-    <LineChart
-      className="h-80"
-      data={hardCodedData}
-      index="date"
-      categories={["SolarPanels", "Inverters"]}
-      colors={["indigo", "rose"]}
-      valueFormatter={dataFormatter}
-      yAxisWidth={60}
-      onValueChange={(v) => console.log(v)}
-    />
+    <>
+      <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+        lmaooo idk
+      </h3>
+      <LineChart
+        className="mt-4 h-72"
+        data={hardCodedData}
+        index="date"
+        categories={["pastaorders", "pastapurchases"]}
+        colors={["white", "red"]}
+        valueFormatter={valueFormatter}
+        showAnimation={true}
+        showXAxis={true}
+        showYAxis={true}
+      />
+    </>
   );
 }
+LineChartUsageExample.displayName = "LineChartUsageExample";

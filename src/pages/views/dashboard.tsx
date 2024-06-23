@@ -1,278 +1,156 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/psR1ZUYkUjf
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import { Avatar, AvatarImage } from "@/components/ui/Avatar";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/Table";
-import { Badge } from "@/components/ui/Badge";
-import { JSX, SVGProps, ClassAttributes, HTMLAttributes } from "react";
-import { LineChartEx } from "@/components/tremor/linechart";
-import { Dashboard } from "@/components/ui/Dashboard";
+import { AreaChart, Card, List, ListItem } from "@tremor/react";
+import { Pencil2Icon } from "@radix-ui/react-icons";
+import { Dashboard } from "@/components/ui/SideBar";
 import { useRouter } from "next/router";
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function Component() {
   const router = useRouter();
-  const onClick = (featureId: string) => {
-    if (typeof window !== "undefined" && featureId) {
-      const localHost = window.location.hostname === "localhost";
-      const baseUrl = localHost
-        ? "http://localhost:3000"
-        : "http://simply-two.vercel.app";
-      router.push(featureId, `${baseUrl}${featureId}`);
-    }
+
+  const summary = [
+    {
+      name: "Organic",
+      value: 3273,
+    },
+    {
+      name: "Sponsored",
+      value: 120,
+    },
+  ];
+
+  const valueFormatter = (number: number) =>
+    `${Intl.NumberFormat("us").format(number).toString()}`;
+
+  const statusColor: { [key: string]: string } = {
+    Organic: "bg-blue-500",
+    Sponsored: "bg-violet-500",
   };
+
+  const data = [
+    {
+      date: "Jan 23",
+      Organic: 232,
+      Sponsored: 0,
+    },
+    {
+      date: "Feb 23",
+      Organic: 241,
+      Sponsored: 0,
+    },
+    {
+      date: "Mar 23",
+      Organic: 291,
+      Sponsored: 0,
+    },
+    {
+      date: "Apr 23",
+      Organic: 101,
+      Sponsored: 0,
+    },
+    {
+      date: "May 23",
+      Organic: 318,
+      Sponsored: 0,
+    },
+    {
+      date: "Jun 23",
+      Organic: 205,
+      Sponsored: 0,
+    },
+    {
+      date: "Jul 23",
+      Organic: 372,
+      Sponsored: 0,
+    },
+    {
+      date: "Aug 23",
+      Organic: 341,
+      Sponsored: 0,
+    },
+    {
+      date: "Sep 23",
+      Organic: 387,
+      Sponsored: 120,
+    },
+    {
+      date: "Oct 23",
+      Organic: 220,
+      Sponsored: 0,
+    },
+    {
+      date: "Nov 23",
+      Organic: 372,
+      Sponsored: 0,
+    },
+    {
+      date: "Dec 23",
+      Organic: 321,
+      Sponsored: 0,
+    },
+  ];
+
   return (
     <div className="flex h-screen">
-      <aside className="w-64 bg-[#3b3b3b] p-5 text-white">
-        <Dashboard onClick={onClick} />
+      {/* navigator bar on the siiide */}
+      <aside className="w-1/6 bg-[#3b3b3b] p-5 text-white">
+        <Dashboard />
       </aside>
+
+      {/* main area n shi */}
       <main className="flex-1 bg-white p-8">
-        <header className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Welcome to Your Dashboard</h1>
-          <div className="flex items-center space-x-4">
-            <Avatar>
-              <AvatarImage src="/placeholder-user.jpg" />
-            </Avatar>
-            <span className="font-medium">Username</span>
+        {/* data analytics n shi */}
+        <section className="grid grid-cols-3 gap-6">
+          <Card className="sm:mx-auto sm:max-w-lg">
+            <h3 className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+              Follower metrics
+            </h3>
+            <AreaChart
+              data={data}
+              index="date"
+              categories={["Organic", "Sponsored"]}
+              colors={["blue", "violet"]}
+              valueFormatter={valueFormatter}
+              showLegend={false}
+              showYAxis={false}
+              showGradient={false}
+              startEndOnly={true}
+              className="mt-6 h-32"
+            />
+            <List className="mt-2">
+              {summary.map((item) => (
+                <ListItem key={item.name}>
+                  <div className="flex items-center space-x-2">
+                    <span
+                      className={classNames(
+                        statusColor[item.name],
+                        "h-0.5 w-3"
+                      )}
+                      aria-hidden={true}
+                    />
+                    <span>{item.name}</span>
+                  </div>
+                  <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                    {valueFormatter(item.value)}
+                  </span>
+                </ListItem>
+              ))}
+            </List>
+          </Card>
+        </section>
+
+        {/* this rly dnot matter */}
+        <header className="flex justify-between items-center mt-6">
+          <div className="flex flex-row space-x-4">
+            <Pencil2Icon className="w-6 h-6" />
+            <span>
+              Editing as <b>employee</b>
+            </span>
           </div>
         </header>
-        <section className="grid grid-cols-3 gap-6">
-          <Card className="col-span-2 bg-[#3b3b3b]">
-            <CardHeader>
-              <CardTitle>Performance Overview</CardTitle>
-              <LineChartEx></LineChartEx>
-            </CardHeader>
-            <CardContent>
-              <CurvedlineChart className="w-full h-[300px]" />
-            </CardContent>
-          </Card>
-          <Card className="bg-[#3b3b3b]">
-            <CardHeader>
-              <CardTitle>Tasks</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="list-disc pl-5">
-                <li>Update project plan</li>
-                <li>Review code commits</li>
-                <li>Prepare presentation</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </section>
-        <section className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Recent Activities</h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Activity</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>Apr 10, 2023</TableCell>
-                <TableCell>Submitted report</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">Completed</Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Apr 9, 2023</TableCell>
-                <TableCell>Updated project</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">In progress</Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Apr 8, 2023</TableCell>
-                <TableCell>Met with clients</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">Completed</Badge>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </section>
-        <section className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Chat</h2>
-          <div className="bg-[#3b3b3b] border rounded-lg h-[300px] w-full max-w-sm" />
-        </section>
       </main>
     </div>
-  );
-}
-
-function BarChartIcon(
-  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="12" x2="12" y1="20" y2="10" />
-      <line x1="18" x2="18" y1="20" y2="4" />
-      <line x1="6" x2="6" y1="20" y2="16" />
-    </svg>
-  );
-}
-
-function CurvedlineChart(
-  props: JSX.IntrinsicAttributes &
-    ClassAttributes<HTMLDivElement> &
-    HTMLAttributes<HTMLDivElement>
-) {
-  return <div {...props}></div>;
-}
-
-function HandHelpingIcon(
-  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M11 12h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 14" />
-      <path d="m7 18 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" />
-      <path d="m2 13 6 6" />
-    </svg>
-  );
-}
-
-function LayoutDashboardIcon(
-  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="7" height="9" x="3" y="3" rx="1" />
-      <rect width="7" height="5" x="14" y="3" rx="1" />
-      <rect width="7" height="9" x="14" y="12" rx="1" />
-      <rect width="7" height="5" x="3" y="16" rx="1" />
-    </svg>
-  );
-}
-
-function MessagesSquareIcon(
-  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2z" />
-      <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
-    </svg>
-  );
-}
-
-function SettingsIcon(
-  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function SignalIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2 20h.01" />
-      <path d="M7 20v-4" />
-      <path d="M12 20v-8" />
-      <path d="M17 20V8" />
-      <path d="M22 4v16" />
-    </svg>
-  );
-}
-
-function UserIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
   );
 }
