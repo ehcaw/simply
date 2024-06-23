@@ -5,7 +5,6 @@ from preprocess import X_train, X_test, y_train, y_test
 import pandas as pd
 from ingredientReqs import forecasted_ingredients_summary
 
-
 # Define the neural network model
 model = Sequential([
     Dense(64, input_dim=X_train.shape[1], activation='relu'),  # Input layer and first hidden layer
@@ -53,3 +52,5 @@ print(forecasted_ingredients_summary.head())
 # Save the forecast with predictions to a CSV for future use
 forecasted_ingredients_summary.to_csv('forecasted_ingredient_orders.csv', index=False)
 
+# Save the trained model to an .h5 file
+model.save('ingredient_forecasting_model.h5') 

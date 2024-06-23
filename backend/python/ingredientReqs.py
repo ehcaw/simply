@@ -6,12 +6,6 @@ from utils.convert import convert_quantity_to_float
 # Load drink_ingredients_data from your database
 drink_ingredients_data = pd.read_sql("SELECT * FROM drink_ingredients", engine)
 
-# Print the drink ingredients data to verify
-print(drink_ingredients_data.head())
-
-# Print the forecast data to verify
-print(forecast.tail())
-
 # Load historical sales data
 sales_data = pd.read_sql("SELECT * FROM sales", engine)
 
