@@ -1,0 +1,9 @@
+pandas 
+numpy 
+scikit-learn 
+tensorflow
+awscli 
+boto3 
+sagemaker
+mysql.connector
+plotly
