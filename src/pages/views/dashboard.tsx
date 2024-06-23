@@ -384,7 +384,7 @@ export default function Component({}) {
   const monthlyTrend = () => {
     return (
       <>
-        <Card className="mt-4 relative">
+        <Card className=" w-full h-full mx-mt-4 relative">
           <h3 className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
             Weekly trends - <b>{selectedMonth}</b>
           </h3>
@@ -420,7 +420,7 @@ export default function Component({}) {
   const supplyRatio = () => {
     return (
       <>
-        <Card className="sm:mx-auto sm:max-w-lg">
+        <Card className="w-full sm:mx-auto sm:max-w-lg">
           <h3 className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
             Supply ratio
           </h3>

@@ -6,6 +6,7 @@ import {
   HandHelpingIcon,
   BellDotIcon,
 } from "lucide-react";
+import Image from "next/image";
 
 interface SideBarProps {
   isVisible: boolean;
@@ -14,6 +15,22 @@ interface SideBarProps {
 export function SideBar({ isVisible }: SideBarProps) {
   return (
     <div className="flex flex-col space-y-6">
+      <div className="sidebar-title flex items-center space-x-2 p-4 bg-gray-650">
+        <Image
+          src="/simplylogo.png"
+          alt="Logo"
+          className="invert"
+          width={50}
+          height={50}
+        />
+        <h1
+          className={`text-white text-xl font-bold ${
+            isVisible ? "" : "hidden"
+          }`}
+        >
+          Simply
+        </h1>
+      </div>
       <div className="flex space-x-2 hover:bg-gray-500 rounded-xl hover:bg-opacity-30 hover:opacity-30">
         <LayoutDashboardIcon className={`h-6 w-6`} />
         <button></button> {/* Placeholder button */}
