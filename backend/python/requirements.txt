@@ -6,3 +6,4 @@ awscli
 boto3 
 sagemaker
 mysql.connector
+plotly
