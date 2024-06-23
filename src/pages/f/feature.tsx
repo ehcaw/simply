@@ -11,14 +11,14 @@ const FeaturePage: NextPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      const featureId = router.query.feature as string;
+      const featureId = router.query.featureId as string;
       setFeature(featureId);
       console.log("feature set", featureId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
-  return <div>{feature == "employees" && <EmployeeView />}</div>;
+  return <div>{feature === "employees" && <EmployeeView />}</div>;
 };
 
 export default FeaturePage;

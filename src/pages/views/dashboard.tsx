@@ -17,12 +17,23 @@ import { Badge } from "@/components/ui/Badge";
 import { JSX, SVGProps, ClassAttributes, HTMLAttributes } from "react";
 import { LineChartEx } from "@/components/tremor/linechart";
 import { Dashboard } from "@/components/ui/Dashboard";
+import { useRouter } from "next/router";
 
 export default function Component() {
+  const router = useRouter();
+  const onClick = (featureId: string) => {
+    if (typeof window !== "undefined" && featureId) {
+      const localHost = window.location.hostname === "localhost";
+      const baseUrl = localHost
+        ? "http://localhost:3000"
+        : "http://simply-two.vercel.app";
+      router.push(featureId, `${baseUrl}${featureId}`);
+    }
+  };
   return (
     <div className="flex h-screen">
       <aside className="w-64 bg-[#3b3b3b] p-5 text-white">
-        <Dashboard />
+        <Dashboard onClick={onClick} />
       </aside>
       <main className="flex-1 bg-white p-8">
         <header className="flex justify-between items-center mb-6">

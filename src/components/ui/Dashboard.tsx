@@ -10,19 +10,11 @@ import {
 import { NavButton } from "./NavButton";
 import { useRouter } from "next/router";
 
-export const Dashboard = () => {
-  const router = useRouter();
-  const onClick = (featureName: string) => {
-    if (typeof window !== "undefined" && featureName) {
-      const localHost = window.location.hostname === "localhost";
-      const baseUrl = localHost
-        ? "http://localhost:3000"
-        : "http://simply-two.vercel.app";
-      router.push(featureName, `${baseUrl}/features/${featureName}`, {
-        shallow: true,
-      });
-    }
-  };
+export function Dashboard({
+  onClick,
+}: {
+  onClick: (featureId: string) => void;
+}) {
   return (
     <div className="flex flex-col space-y-6">
       <div className="flex items-center space-x-3">
@@ -63,4 +55,4 @@ export const Dashboard = () => {
       </div>
     </div>
   );
-};
+}
